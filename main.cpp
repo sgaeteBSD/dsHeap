@@ -62,3 +62,22 @@ int main() {
     }
   }
 }
+
+void add() {
+  int a = 0;
+  bool slotFound = false;
+  while (a < 100 && slotFound == false) {
+    if (tree[a] == NULL) {
+      if (a == 0) {
+	//slot 0
+      }
+      else {
+	
+      }
+    }
+  }
+}
+//Parent: i
+//Child 1: 2i+1
+//Child 2: 2i+2
+//Grandparent: [(i-1)/2] //take the first integer. if its 3.5, take 3. if its 6.5, take 6.
