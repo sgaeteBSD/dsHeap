@@ -11,15 +11,17 @@
 
 using namespace std;
 
-//void add();
+void add(Node** tree, int newVal);
 //void addManual();
 //void addFile();
 //void removeLargest();
 //void removeAll();
-//void print();
+void print(Node** tree, int pos, int depth, int size);
+
+void recursift(Node** tree, int index);
 
 int main() {
-  Node* tree[99]; //create 100-element array
+  Node** tree = new Node*[99]; //create 100-element array
   
   for (int a = 0; a < (100); a++) { //init array slots to null
     tree[a] = NULL;
@@ -43,7 +45,21 @@ int main() {
 
     }
     else if (strcmp(command, "PRINT") == 0) {
-      //printer(table, tblSize);
+      int treeSize = 0;
+      bool treeCheck = false;
+      if (tree[treeSize] == NULL) {
+	treeCheck = true;
+	cout << "There is no root element in your heap." << endl;
+      }
+      while (treeSize <= 100 && treeCheck == false) {
+	if (tree[treeSize] == NULL) {
+	  treeCheck = true;
+	}
+	treeSize++;
+      }
+      if (treeSize > 0) {
+	print(tree, 0, 0, treeSize);
+      }
     }
     else if (strcmp(command, "REMOVE_BIG") == 0) {
       //int deleteID; //get ID to look for
@@ -63,21 +79,47 @@ int main() {
   }
 }
 
-void add() {
-  int a = 0;
+void add(Node** tree, int newVal) {
+  int index = 0;
   bool slotFound = false;
-  while (a < 100 && slotFound == false) {
-    if (tree[a] == NULL) {
-      if (a == 0) {
-	//slot 0
-      }
-      else {
-	
-      }
+  while (index < 100 && slotFound == false) {
+    if (tree[index] == NULL) {
+	Node* newNode = new Node(newVal);
+	tree[index] = newNode;
+	slotFound = true;
     }
+    index++;
   }
+  recursift(tree, index);
+  //now sift around for heap property
 }
 //Parent: i
 //Child 1: 2i+1
 //Child 2: 2i+2
 //Grandparent: [(i-1)/2] //take the first integer. if its 3.5, take 3. if its 6.5, take 6.
+
+void recursift(Node** tree, int index) {
+  if (index != 0) {
+    int parentSlot = int((index-1)/2);
+    if (tree[index]->getVal() > tree[parentSlot]->getVal()) {
+      Node* temp = tree[parentSlot];
+      tree[parentSlot] = tree[index];
+      tree[index] = temp;
+
+      recursift(tree, index);
+    }
+  }
+}
+
+void print(Node** tree, int pos, int depth, int size) {
+  if (pos*2+1 < size) { //check right not NULL
+    print(tree, pos*2+1, depth+1, size); //recurse right
+  }
+  for (int a = 0; a < depth; a + 1) {
+    cout << '\t';
+  }
+  cout << tree[pos] << endl;
+  if (pos*2 < size) { //check left not NULL
+    print(tree, pos*2, depth+1, size); //recurse left
+  }
+}
