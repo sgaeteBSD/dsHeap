@@ -51,7 +51,7 @@ int main() {
     else if (strcmp(command, "PRINT") == 0) {
       int treeSize = 0;
       bool treeCheck = false;
-      if (tree[treeSize] == NULL) {
+      if (tree[0] == NULL) {
 	treeCheck = true;
 	cout << "There is no root element in your heap." << endl;
       }
@@ -84,17 +84,15 @@ int main() {
 }
 
 void add(Node* tree[], int newVal) {
-  int index = -1;
-  bool slotFound = false;
-  Node* newNode = new Node(newVal);
-  while (index < 100 && slotFound == false) {
+  int index = 0;
+  while (index < 100 && tree[index] != NULL) {
     index++;
-    if (tree[index] == NULL) {
-	tree[index] = newNode;
-	slotFound = true;
-    }
   }
-  recursift(tree, index);
+    if (index < 100) {
+      Node* newNode = new Node(newVal);
+      tree[index] = newNode;
+      recursift(tree, index);
+    }
   
   //now sift around for heap property
 }
@@ -113,7 +111,7 @@ void recursift(Node* tree[], int index) {
       tree[index] = temp;
       
       
-      recursift(tree, index);
+      recursift(tree, parentSlot);
     }
   }
 }
