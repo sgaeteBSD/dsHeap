@@ -13,7 +13,7 @@
 using namespace std;
 
 void add(Node* tree[], int newVal);
-//void addManual();
+void addManual(Node* tree[]);
 //void addFile();
 //void removeLargest();
 //void removeAll();
@@ -28,7 +28,7 @@ int main() {
   for (int a = 0; a < 101; a++) {
     tree[a] = NULL;
   }
-  for (int a = 1; a < (101); a++) { //init array slots to null
+  for (int a = 1; a < (55); a++) { //init array slots to null
     int randVal = (rand() % 999);
     add(tree, randVal);
   }
@@ -49,8 +49,7 @@ int main() {
     cin >> command; 
     cin.ignore();
     if (strcmp(command, "ADD_MANUAL") == 0) {
-      //Student* newStu = new Student(true); //create new student (constructor will prompt input)
-      //adder(newStu, table, tblSize);
+      addManual(tree);
     }
     else if (strcmp(command, "ADD_FILE") == 0) {
 
@@ -105,22 +104,20 @@ void add(Node* tree[], int newVal) {
   //now sift around for heap property
 }
 //Parent: i
-//Child 1: 2i+1
-//Child 2: 2i+2
-//Grandparent: [(i-1)/2] //take the first integer. if its 3.5, take 3. if its 6.5, take 6.
+//Child 1: 2i
+//Child 2: 2i+1
+//Grandparent: [(i)/2] //take the first integer. if its 3.5, take 3. if its 6.5, take 6.
 
 void recursift(Node* tree[], int index) {
+  cout << index << endl;
   if (index > 1) {
-    int parentSlot = floor((index-1)/2);
-    if (parentSlot == 0) {
-      //root
-    }
-    else if (tree[index]->getVal() > tree[parentSlot]->getVal()) {
+    int parentSlot = index / 2;
+    cout << parentSlot << endl;
+    if (tree[index]->getVal() > tree[parentSlot]->getVal()) {
       Node* temp = tree[parentSlot];
       tree[parentSlot] = tree[index];
       
       tree[index] = temp;
-      cout << "success" << endl;
       
       recursift(tree, parentSlot);
     }
@@ -137,5 +134,20 @@ void print(Node* tree[], int pos, int depth, int size) {
   cout << tree[pos]->getVal() << endl;
   if ((pos)*2 < size) { //check left not NULL
     print(tree, (pos)*2, depth+1, size); //recurse left
+  }
+}
+
+void addManual(Node* tree[]) {
+  if (tree[100] != NULL) {
+    cout << "Your tree is already full (100), sorry!" << endl;
+    cout << endl;
+  }
+  else {
+    int newVal = 0;
+    cout << "What number would you like to add?" << endl;
+    cin >> newVal;
+    add(tree, newVal);
+    cout << newVal << " has been added to the heap." << endl;
+    cout << endl;
   }
 }
