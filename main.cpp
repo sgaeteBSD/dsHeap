@@ -24,12 +24,18 @@ void recursift(Node* tree[], int index);
 int main() {
   //srand
   Node* tree[100]; //create 100-element array
+
+  fstream HeapNumbers("heap-numbers.txt");
+  int heapNum;
+  
   
   for (int a = 0; a < 101; a++) {
     tree[a] = NULL;
   }
-  for (int a = 1; a < (55); a++) { //init array slots to null
-    int randVal = (rand() % 999);
+  for (int a = 1; a < (10); a++) { //init array slots to null
+    //int randVal = (rand() % 999);
+    int randVal;
+    HeapNumbers >> randVal;
     add(tree, randVal);
   }
   cout << "Initialized 100 tree slots to null." << endl;
