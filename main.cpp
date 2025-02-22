@@ -16,9 +16,10 @@ void add(Node* tree[], int newVal);
 void addManual(Node* tree[]);
 void addFile(Node* tree[]);
 void removeRoot(Node* tree[], int size);
-//void removeAll();
+void removeAll(Node* tree[]);
 void print(Node* tree[], int pos, int depth, int size);
 
+int getSize(Node* tree[]);
 void recurswim(Node* tree[], int index);
 void recursink(Node* tree[], int index);
 
@@ -30,10 +31,10 @@ int main() {
   int heapNum;
   
   
-  for (int a = 0; a < 101; a++) {
+  for (int a = 1; a < 101; a++) {
     tree[a] = NULL;
   }
-  for (int a = 1; a < 10; a++) { //testing
+  for (int a = 1; a < 50; a++) { //testing
     int randVal = (rand() % 999);
     add(tree, randVal);
   }
@@ -56,46 +57,22 @@ int main() {
       addFile(tree);
     }
     else if (strcmp(command, "PRINT") == 0) {
-      int treeSize = 1;
-      bool treeCheck = false;
-      if (tree[1] == NULL) {
-	treeCheck = true;
-	cout << "There is no root element in your heap." << endl;
-	cout << endl;
-      }
-      while (treeSize <= 101 && treeCheck == false) {
-	if (tree[treeSize] == NULL) {
-	  treeCheck = true;
-	}
-	treeSize++;
-      }
+      int treeSize = getSize(tree);
       if (treeSize > 1) {
 	print(tree, 1, 0, treeSize-2);
       }
     }
     else if (strcmp(command, "REMOVE_ROOT") == 0) {
-            int treeSize = 1;
-      bool treeCheck = false;
-      if (tree[1] == NULL) {
-	treeCheck = true;
-	cout << "There is no root element in your heap." << endl;
-	cout << endl;
-      }
-      while (treeSize <= 101 && treeCheck == false) {
-	if (tree[treeSize] == NULL) {
-	  treeCheck = true;
-	}
-	treeSize++;
-      }
+      int treeSize = getSize(tree);
       if (treeSize > 1) {
 	removeRoot(tree, treeSize-3);
       }
     }
     else if (strcmp(command, "REMOVE_ALL") == 0) {
-
+      removeAll(tree);
     }
     else if (strcmp(command, "QUIT") == 0) {
-      //quitter(input);
+      cout << getSize(tree)-3 << endl;
     }
     else {
       cout << "Invalid input! Try again." << endl;
@@ -149,13 +126,14 @@ void print(Node* tree[], int pos, int depth, int size) {
 }
 
 void addManual(Node* tree[]) {
-  if (tree[100] != NULL) {
+  cout << getSize(tree) << endl;
+  if ((getSize(tree)-3) > 99) {
     cout << "Your tree is already full (100), sorry!" << endl;
     cout << endl;
   }
   else {
     int newVal = 0;
-    cout << "What number would you like to add?" << endl;
+    cout << "Input a number to add." << endl;
     cin >> newVal;
     cin.ignore();
     add(tree, newVal);
@@ -184,27 +162,62 @@ void addFile(Node* tree[]) {
 void removeRoot(Node* tree[], int size) {
   Node* temp = tree[1];
   tree[1] = NULL;
-  cout << "Deleting root, it's value was: " << temp->getVal() << endl;
+  cout << "Deleting root: " << temp->getVal() << endl;
   cout << endl;
   delete temp;
 
-  tree[1] = tree[size-1];
-  delete tree[size-1];
-  recursink(tree, 1);
+  if (size > 1) {
+    tree[1] = tree[size-1];
+    delete tree[size-1];
+    tree[size-1] = NULL;
+    recursink(tree, 1);
+  }
+}
+
+void removeAll(Node* tree[]) {
+  while (tree[1] != NULL) {
+    int size = getSize(tree);
+    removeRoot(tree, size-1);
+  }
+  cout << "All heap elements have been deleted." << endl;
+  cout << endl;
 }
 
 void recursink(Node* tree[], int index) {
-  if (tree[2*index]->getVal() > tree[index]->getVal()
-      || tree[(2*index)+1]->getVal() > tree[index]->getVal()) {
-    if (tree[2*index]->getVal() > tree[(2*index)+1]->getVal()) {
-      Node* temp = tree[index];
-      tree[index] = tree[2*index];
-      tree[2*index] = temp;
-    }
-    else {
-      Node* temp = tree[index];
-      tree[index] = tree[(2*index)+1];
-      tree[(2*index)+1] = temp;
+  if (tree[(2*index)+1] != NULL) {
+    if (tree[2*index]->getVal() > tree[index]->getVal()
+	|| tree[(2*index)+1]->getVal() > tree[index]->getVal()) {
+      if (tree[2*index]->getVal() > tree[(2*index)+1]->getVal()) {
+	Node* temp = tree[index];
+	tree[index] = tree[2*index];
+	tree[2*index] = temp;
+	recursink(tree, 2*index);
+      }
+      else {
+	Node* temp = tree[index];
+	tree[index] = tree[(2*index)+1];
+	tree[(2*index)+1] = temp;
+	recursink(tree, (2*index)+1);
+      }
     }
   }
 }
+
+int getSize(Node* tree[]) {
+    int treeSize = 1;
+
+    // Check if the heap is empty
+    if (tree[1] == NULL) {
+        cout << "There is no root element in your heap." << endl;
+        return 0; // Return 0 if empty
+    }
+
+    // Iterate until we find the first NULL slot
+    while (treeSize < 100 && tree[treeSize] != NULL) {
+        treeSize++;
+    }
+
+    return treeSize - 1; // Subtract 1 to get the actual last index
+}
+
+
