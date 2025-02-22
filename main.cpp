@@ -60,7 +60,7 @@ int main() {
     else if (strcmp(command, "REMOVE_ROOT") == 0) {
       int treeSize = getSize(tree);
       if (treeSize > 1) {
-	removeRoot(tree, treeSize-3); //remove largest value (root)
+	removeRoot(tree, treeSize); //remove largest value (root)
       }
       else { //if size 0
 	cout << "Your heap is empty!" << endl;
