@@ -14,12 +14,13 @@ using namespace std;
 
 void add(Node* tree[], int newVal);
 void addManual(Node* tree[]);
-//void addFile();
-//void removeLargest();
+void addFile(Node* tree[]);
+void removeRoot(Node* tree[], int size);
 //void removeAll();
 void print(Node* tree[], int pos, int depth, int size);
 
-void recursift(Node* tree[], int index);
+void recurswim(Node* tree[], int index);
+void recursink(Node* tree[], int index);
 
 int main() {
   //srand
@@ -32,22 +33,16 @@ int main() {
   for (int a = 0; a < 101; a++) {
     tree[a] = NULL;
   }
-  for (int a = 1; a < (10); a++) { //init array slots to null
-    //int randVal = (rand() % 999);
-    int randVal;
-    HeapNumbers >> randVal;
+  for (int a = 1; a < 10; a++) { //testing
+    int randVal = (rand() % 999);
     add(tree, randVal);
   }
   cout << "Initialized 100 tree slots to null." << endl;
-
-  
-  
-  
-  
+  cout << endl;
   
   bool input = true;
   while (input == true) {
-    cout << "Your commands are ADD_MANUAL, ADD_FILE, PRINT, REMOVE_BIG, REMOVE_ALL, and QUIT." << endl;
+    cout << "Your commands are ADD_MANUAL, ADD_FILE, PRINT, REMOVE_ROOT, REMOVE_ALL, and QUIT." << endl;
     cout << endl;
     cout << "Input a command." << endl;
     char command[15] = ""; //make sure to fit chars + 1 terminating
@@ -58,7 +53,7 @@ int main() {
       addManual(tree);
     }
     else if (strcmp(command, "ADD_FILE") == 0) {
-
+      addFile(tree);
     }
     else if (strcmp(command, "PRINT") == 0) {
       int treeSize = 1;
@@ -66,6 +61,7 @@ int main() {
       if (tree[1] == NULL) {
 	treeCheck = true;
 	cout << "There is no root element in your heap." << endl;
+	cout << endl;
       }
       while (treeSize <= 101 && treeCheck == false) {
 	if (tree[treeSize] == NULL) {
@@ -73,16 +69,27 @@ int main() {
 	}
 	treeSize++;
       }
-      cout << "size: " << treeSize << endl;
       if (treeSize > 1) {
 	print(tree, 1, 0, treeSize-2);
       }
     }
-    else if (strcmp(command, "REMOVE_BIG") == 0) {
-      //int deleteID; //get ID to look for
-        //cout << "Enter the ID of the student to be deleted: ";
-        //cin >> deleteID;
-        //deleter(table, deleteID, tblSize);
+    else if (strcmp(command, "REMOVE_ROOT") == 0) {
+            int treeSize = 1;
+      bool treeCheck = false;
+      if (tree[1] == NULL) {
+	treeCheck = true;
+	cout << "There is no root element in your heap." << endl;
+	cout << endl;
+      }
+      while (treeSize <= 101 && treeCheck == false) {
+	if (tree[treeSize] == NULL) {
+	  treeCheck = true;
+	}
+	treeSize++;
+      }
+      if (treeSize > 1) {
+	removeRoot(tree, treeSize-3);
+      }
     }
     else if (strcmp(command, "REMOVE_ALL") == 0) {
 
@@ -104,7 +111,7 @@ void add(Node* tree[], int newVal) {
     if (index < 101) {
       Node* newNode = new Node(newVal);
       tree[index] = newNode;
-      recursift(tree, index);
+      recurswim(tree, index);
     }
   
   //now sift around for heap property
@@ -114,18 +121,16 @@ void add(Node* tree[], int newVal) {
 //Child 2: 2i+1
 //Grandparent: [(i)/2] //take the first integer. if its 3.5, take 3. if its 6.5, take 6.
 
-void recursift(Node* tree[], int index) {
-  cout << index << endl;
+void recurswim(Node* tree[], int index) {
   if (index > 1) {
-    int parentSlot = index / 2;
-    cout << parentSlot << endl;
+    int parentSlot = floor(index / 2);
     if (tree[index]->getVal() > tree[parentSlot]->getVal()) {
       Node* temp = tree[parentSlot];
       tree[parentSlot] = tree[index];
       
       tree[index] = temp;
       
-      recursift(tree, parentSlot);
+      recurswim(tree, parentSlot);
     }
   }
 }
@@ -152,8 +157,54 @@ void addManual(Node* tree[]) {
     int newVal = 0;
     cout << "What number would you like to add?" << endl;
     cin >> newVal;
+    cin.ignore();
     add(tree, newVal);
     cout << newVal << " has been added to the heap." << endl;
     cout << endl;
+  }
+}
+
+void addFile(Node* tree[]) {
+  cout << "Please enter the full name of your file. (ex: 'heap-numbers.txt')" << endl;
+  string fileName;
+  int fileVal;
+  cin >> fileName;
+  cin.ignore();
+  fstream HeapNumbers(fileName);
+  int heapNum;
+  while (HeapNumbers >> fileVal) {
+    add(tree, fileVal);
+  }
+  HeapNumbers.close();
+
+  cout << "Numbers from " << fileName << " have been added." << endl;
+  cout << endl;
+}
+
+void removeRoot(Node* tree[], int size) {
+  Node* temp = tree[1];
+  tree[1] = NULL;
+  cout << "Deleting root, it's value was: " << temp->getVal() << endl;
+  cout << endl;
+  delete temp;
+
+  tree[1] = tree[size-1];
+  delete tree[size-1];
+  recursink(tree, 1);
+}
+
+void recursink(Node* tree[], int index) {
+  if (tree[2*index]->getVal() > tree[index]->getVal()
+      || tree[(2*index)+1]->getVal() > tree[index]->getVal()) {
+    if (tree[2*index]->getVal() > tree[(2*index)+1]->getVal()) {
+      Node* temp = tree[index];
+      tree[index] = tree[2*index];
+      tree[2*index] = temp;
+    }
+    else {
+      Node* temp = tree[index];
+      tree[index] = tree[(2*index)+1];
+      tree[(2*index)+1] = temp;
+    }
   }
 }
